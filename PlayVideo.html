@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Navigation</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    :root {
+      --icon-color: #9333ea;
+    }
+    .icon-colored {
+      color: var(--icon-color);
+    }
+    .bg-icon-colored {
+      background-color: var(--icon-color);
+    }
+    .border-icon-colored {
+      border-color: var(--icon-color);
+    }
+    
+    /* Dark Mode Styles */
+    .dark-mode #top-bar,
+    .dark-mode #tab-bar {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+    
+    .dark-mode .bg-white {
+      background-color: #1f2937 !important;
+    }
+    
+    .dark-mode .text-gray-800,
+    .dark-mode .text-gray-600 {
+      color: #e5e7eb !important;
+    }
+    
+    .dark-mode .text-gray-500 {
+      color: #9ca3af !important;
+    }
+    
+    .dark-mode .border-gray-200 {
+      border-color: #374151 !important;
+    }
+    
+    .dark-mode input {
+      background-color: #374151;
+      color: #e5e7eb;
+      border-color: #4b5563;
+    }
+    
+    .dark-mode input::placeholder {
+      color: #9ca3af;
+    }
+    
+    .dark-mode .bg-gray-200 {
+      background-color: #374151 !important;
+      color: #e5e7eb !important;
+    }
+    
+    .dark-mode .hover\:bg-gray-300:hover {
+      background-color: #4b5563 !important;
+    }
+    
+    .dark-mode .bg-red-50 {
+      background-color: #7f1d1d !important;
+    }
+    
+    .dark-mode .border-red-200 {
+      border-color: #991b1b !important;
+    }
+    
+    .dark-mode .text-red-700 {
+      color: #fca5a5 !important;
+    }
+    
+    .dark-mode .hover\:bg-gray-100:hover {
+      background-color: #374151 !important;
+    }
+    
+    /* Drag and drop styles */
+    .drag-over {
+      border-top: 3px solid var(--icon-color);
+      margin-top: -3px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full m-0">
+  <main class="flex flex-col h-full w-full bg-gradient-to-br from-purple-50 to-blue-50"><!-- Top Search Bar -->
+   <div id="top-bar" class="bg-white border-b border-gray-200 shadow-sm p-3 sm:p-4">
+    <div class="flex items-center justify-between gap-2 sm:gap-4 max-w-7xl mx-auto">
+     <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="relative w-8 h-8 sm:w-10 sm:h-10"><img id="logo-image" src="Untitled design_20251210_183646_0000.svg" alt="PlayVideo Logo" class="w-full h-full rounded object-cover" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';" onload="document.getElementById('logo-fallback').style.display='none';">
+       <div id="logo-fallback" class="absolute inset-0 flex items-center justify-center bg-icon-colored rounded">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+        </svg>
+       </div>
+      </div>
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-800">PlayVideo</h1>
+     </div>
+     <form id="search-form" class="flex-1 max-w-md">
+      <div class="relative"><input type="text" id="search-input" placeholder="Search..." class="w-full pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" required> <button type="submit" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400 hover:text-purple-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg></button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Content Area -->
+   <div id="content" class="flex-1 overflow-auto">
+    <div id="home-content" class="w-full p-4 sm:p-6">
+     <div id="welcome-message" class="text-center py-12">
+      <div class="mb-6">
+       <svg class="w-20 h-20 mx-auto icon-colored" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+       </svg>
+      </div>
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome to PlayVideo</h2>
+      <p class="text-lg text-gray-600 mb-6">Search for videos to get started!</p>
+      <p class="text-sm text-gray-500">Type something in the search bar above 🔍</p>
+     </div>
+     <div id="loading" class="hidden text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-icon-colored"></div>
+      <p class="mt-4 text-gray-600">Searching videos...</p>
+     </div>
+     <div id="error-message" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-red-700">
+     </div>
+     <div id="video-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+     </div>
+    </div>
+    <div id="library-content" class="w-full px-4 py-8 hidden relative">
+     <div class="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4"><button id="history-btn" class="flex items-center justify-center gap-3 bg-white hover:bg-purple-50 border-2 border-icon-colored rounded-xl p-6 transition-all duration-200 shadow-sm hover:shadow-md">
+       <svg class="w-8 h-8 icon-colored" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg><span class="text-xl font-semibold text-gray-800">History</span> </button> <button id="likes-btn" class="flex items-center justify-center gap-3 bg-white hover:bg-purple-50 border-2 border-icon-colored rounded-xl p-6 transition-all duration-200 shadow-sm hover:shadow-md">
+       <svg class="w-8 h-8 icon-colored" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+       </svg><span class="text-xl font-semibold text-gray-800">Likes</span> </button>
+     </div><!-- Settings Gear Icon --> <button id="settings-btn" class="absolute bottom-4 right-4 w-14 h-14 bg-icon-colored hover:bg-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg></button>
+    </div><!-- Settings Page -->
+    <div id="settings-content" class="w-full p-4 sm:p-6 hidden">
+     <div class="max-w-2xl mx-auto">
+      <div class="flex items-center justify-between mb-6">
+       <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Settings</h2><button id="back-from-settings" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"> Back </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-6 space-y-6"><!-- Dark Mode Toggle -->
+       <div class="flex items-center justify-between">
+        <div>
+         <h3 class="text-lg font-semibold text-gray-800">Dark Mode</h3>
+         <p class="text-sm text-gray-600">Switch between light and dark theme</p>
+        </div><label class="relative inline-flex items-center cursor-pointer"> <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div></label>
+       </div><!-- Icon Color Picker -->
+       <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Icon Color</h3>
+        <p class="text-sm text-gray-600 mb-3">Customize the color of icons and accents</p>
+        <div class="flex flex-wrap gap-3"><button class="color-option w-12 h-12 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #9333ea;" data-color="#9333ea"></button> <button class="color-option w-12 h-12 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #ef4444;" data-color="#ef4444"></button> <button class="color-option w-12 h-12 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #3b82f6;" data-color="#3b82f6"></button> <button class="color-option w-12 h-12 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #10b981;" data-color="#10b981"></button> <button class="color-option w-12 h-12 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #f59e0b;" data-color="#f59e0b"></button> <button class="color-option w-12 h-12 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform" style="background-color: #ec4899;" data-color="#ec4899"></button>
+        </div>
+       </div><!-- Age Limit Toggle -->
+       <div class="flex items-center justify-between">
+        <div>
+         <h3 class="text-lg font-semibold text-gray-800">Age Restriction (17+)</h3>
+         <p class="text-sm text-gray-600">Filter content suitable for ages 17 and below</p>
+        </div><label class="relative inline-flex items-center cursor-pointer"> <input type="checkbox" id="age-limit-toggle" class="sr-only peer">
+         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div></label>
+       </div>
+      </div>
+     </div>
+    </div><!-- Video Player Page -->
+    <div id="player-content" class="w-full h-full bg-black hidden">
+     <div class="max-w-7xl mx-auto h-full flex flex-col">
+      <div class="flex-1 flex items-center justify-center">
+       <div id="player-container" class="w-full aspect-video bg-black"></div>
+      </div>
+      <div class="bg-white p-4">
+       <h2 id="video-title" class="text-xl font-bold text-gray-800 mb-2"></h2>
+       <p id="video-channel" class="text-sm text-gray-600 mb-4"></p><!-- Queue Info -->
+       <div class="flex items-center justify-between mb-4">
+        <div id="queue-info" class="text-sm text-gray-600">
+         Playing <span id="current-queue-position">1</span> of <span id="total-queue-count">1</span>
+        </div><button id="show-queue-btn" class="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors text-sm">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+         </svg> View Queue </button>
+       </div>
+       <div class="flex flex-wrap gap-3"><button id="like-btn" class="flex items-center gap-2 px-6 py-2 bg-icon-colored hover:bg-purple-700 text-white rounded-lg transition-colors">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+         </svg><span id="like-text">Like</span> </button> <button id="prev-btn" class="flex items-center gap-2 px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+         <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+         </svg> Prev </button> <button id="next-btn" class="flex items-center gap-2 px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"> Next 
+         <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M16 18h2V6h-2zM6 18l8.5-6L6 6z" />
+         </svg></button> <button id="shuffle-btn" class="flex items-center gap-2 px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+         </svg> Shuffle </button> <button id="loop-btn" class="flex items-center gap-2 px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+         </svg> Loop </button> <button id="back-btn" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"> Back </button>
+       </div>
+      </div>
+     </div>
+    </div><!-- History Page -->
+    <div id="history-content" class="w-full p-4 sm:p-6 hidden">
+     <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Watch History</h2><button id="back-from-history" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"> Back </button>
+     </div>
+     <div id="history-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+     </div>
+    </div><!-- Likes Page -->
+    <div id="likes-content" class="w-full p-4 sm:p-6 hidden">
+     <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Liked Videos</h2><button id="back-from-likes" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"> Back </button>
+     </div>
+     <div id="likes-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+     </div>
+    </div><!-- Queue Page -->
+    <div id="queue-content" class="w-full p-4 sm:p-6 hidden">
+     <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Current Queue</h2><button id="back-from-queue" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"> Back to Player </button>
+     </div>
+     <div id="queue-list" class="space-y-3 max-w-4xl mx-auto">
+     </div>
+    </div>
+   </div><!-- Bottom Tab Bar -->
+   <nav id="tab-bar" class="bg-white border-t border-gray-200 shadow-lg">
+    <div class="flex justify-around items-center h-16 sm:h-20"><!-- Home Tab --> <button id="home-tab" class="flex-1 flex flex-col items-center justify-center h-full transition-colors duration-200 bg-purple-100 icon-colored">
+      <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg><span id="home-tab-label" class="text-xs sm:text-sm font-medium">Home</span> </button> <!-- Library Tab --> <button id="library-tab" class="flex-1 flex flex-col items-center justify-center h-full transition-colors duration-200 text-gray-500 hover:bg-gray-50">
+      <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg><span id="library-tab-label" class="text-xs sm:text-sm font-medium">Library</span> </button>
+    </div>
+   </nav>
+  </main>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // YouTube API Configuration
+    const YOUTUBE_API_KEY = 'AIzaSyBf5-bdmWYdTNB_ofQwwSMgAOt3GP0NRHc'; // Replace with your actual API key
+    const MAX_RESULTS = 100;
+
+    const defaultConfig = {
+      home_label: "Home",
+      library_label: "Library",
+      primary_color: "#9333ea",
+      background_color: "#faf5ff",
+      text_color: "#1f2937"
+    };
+
+    let currentTab = 'home';
+    let player = null;
+    let currentVideo = null;
+    let watchInterval = null;
+    let ytApiReady = false;
+    let videoQueue = [];
+    let currentQueueIndex = 0;
+    let isLoopEnabled = false;
+    let isShuffleEnabled = false;
+
+    // Settings from localStorage
+    function getSettings() {
+      const settings = localStorage.getItem('appSettings');
+      return settings ? JSON.parse(settings) : {
+        darkMode: false,
+        iconColor: '#9333ea',
+        ageLimit: false
+      };
+    }
+
+    function saveSettings(settings) {
+      localStorage.setItem('appSettings', JSON.stringify(settings));
+      applySettings(settings);
+    }
+
+    function applySettings(settings) {
+      const main = document.querySelector('main');
+      const body = document.body;
+      
+      if (settings.darkMode) {
+        // Apply dark mode class to body
+        body.classList.add('dark-mode');
+        main.classList.remove('bg-gradient-to-br', 'from-purple-50', 'to-blue-50');
+        main.classList.add('bg-gray-900');
+        body.style.backgroundColor = '#111827';
+      } else {
+        // Remove dark mode class
+        body.classList.remove('dark-mode');
+        main.classList.add('bg-gradient-to-br', 'from-purple-50', 'to-blue-50');
+        main.classList.remove('bg-gray-900');
+        body.style.backgroundColor = '';
+      }
+      
+      // Apply icon color
+      document.documentElement.style.setProperty('--icon-color', settings.iconColor);
+    }
+
+    // Initialize settings on load
+    const currentSettings = getSettings();
+    applySettings(currentSettings);
+    document.getElementById('dark-mode-toggle').checked = currentSettings.darkMode;
+    document.getElementById('age-limit-toggle').checked = currentSettings.ageLimit;
+
+    // YouTube IFrame API Ready Callback
+    window.onYouTubeIframeAPIReady = function() {
+      ytApiReady = true;
+    };
+
+    const homeTab = document.getElementById('home-tab');
+    const libraryTab = document.getElementById('library-tab');
+    const homeContent = document.getElementById('home-content');
+    const libraryContent = document.getElementById('library-content');
+    const playerContent = document.getElementById('player-content');
+    const historyContent = document.getElementById('history-content');
+    const likesContent = document.getElementById('likes-content');
+    const settingsContent = document.getElementById('settings-content');
+    const queueContent = document.getElementById('queue-content');
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const videoResults = document.getElementById('video-results');
+    const loading = document.getElementById('loading');
+    const errorMessage = document.getElementById('error-message');
+    const welcomeMessage = document.getElementById('welcome-message');
+    const tabBar = document.getElementById('tab-bar');
+    const topBar = document.getElementById('top-bar');
+
+    // Local Storage Functions
+    function getHistory() {
+      const history = localStorage.getItem('videoHistory');
+      return history ? JSON.parse(history) : [];
+    }
+
+    function saveToHistory(video, percentage) {
+      let history = getHistory();
+      const existingIndex = history.findIndex(v => v.videoId === video.videoId);
+      
+      const historyItem = {
+        videoId: video.videoId,
+        title: video.title,
+        channelTitle: video.channelTitle,
+        thumbnail: video.thumbnail,
+        percentage: percentage,
+        timestamp: Date.now()
+      };
+      
+      if (existingIndex !== -1) {
+        history[existingIndex] = historyItem;
+      } else {
+        history.unshift(historyItem);
+      }
+      
+      localStorage.setItem('videoHistory', JSON.stringify(history));
+    }
+
+    function getLikedVideos() {
+      const liked = localStorage.getItem('likedVideos');
+      return liked ? JSON.parse(liked) : [];
+    }
+
+    function toggleLike(video) {
+      let liked = getLikedVideos();
+      const existingIndex = liked.findIndex(v => v.videoId === video.videoId);
+      
+      if (existingIndex !== -1) {
+        liked.splice(existingIndex, 1);
+        localStorage.setItem('likedVideos', JSON.stringify(liked));
+        return false;
+      } else {
+        liked.unshift({
+          videoId: video.videoId,
+          title: video.title,
+          channelTitle: video.channelTitle,
+          thumbnail: video.thumbnail,
+          timestamp: Date.now()
+        });
+        localStorage.setItem('likedVideos', JSON.stringify(liked));
+        return true;
+      }
+    }
+
+    function isLiked(videoId) {
+      const liked = getLikedVideos();
+      return liked.some(v => v.videoId === videoId);
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      if (tab === 'home') {
+        homeTab.classList.add('bg-purple-100', 'icon-colored');
+        homeTab.classList.remove('text-gray-500', 'hover:bg-gray-50');
+        libraryTab.classList.remove('bg-purple-100', 'icon-colored');
+        libraryTab.classList.add('text-gray-500', 'hover:bg-gray-50');
+        
+        homeContent.classList.remove('hidden');
+        libraryContent.classList.add('hidden');
+        playerContent.classList.add('hidden');
+        historyContent.classList.add('hidden');
+        likesContent.classList.add('hidden');
+        settingsContent.classList.add('hidden');
+        tabBar.classList.remove('hidden');
+        topBar.classList.remove('hidden');
+      } else {
+        libraryTab.classList.add('bg-purple-100', 'icon-colored');
+        libraryTab.classList.remove('text-gray-500', 'hover:bg-gray-50');
+        homeTab.classList.remove('bg-purple-100', 'icon-colored');
+        homeTab.classList.add('text-gray-500', 'hover:bg-gray-50');
+        
+        libraryContent.classList.remove('hidden');
+        homeContent.classList.add('hidden');
+        playerContent.classList.add('hidden');
+        historyContent.classList.add('hidden');
+        likesContent.classList.add('hidden');
+        settingsContent.classList.add('hidden');
+        tabBar.classList.remove('hidden');
+        topBar.classList.remove('hidden');
+      }
+    }
+
+    homeTab.addEventListener('click', () => switchTab('home'));
+    libraryTab.addEventListener('click', () => switchTab('library'));
+
+    // Settings Button
+    document.getElementById('settings-btn').addEventListener('click', () => {
+      homeContent.classList.add('hidden');
+      libraryContent.classList.add('hidden');
+      playerContent.classList.add('hidden');
+      historyContent.classList.add('hidden');
+      likesContent.classList.add('hidden');
+      settingsContent.classList.remove('hidden');
+    });
+
+    document.getElementById('back-from-settings').addEventListener('click', () => {
+      switchTab('library');
+    });
+
+    // Dark Mode Toggle
+    document.getElementById('dark-mode-toggle').addEventListener('change', (e) => {
+      const settings = getSettings();
+      settings.darkMode = e.target.checked;
+      saveSettings(settings);
+    });
+
+    // Age Limit Toggle
+    document.getElementById('age-limit-toggle').addEventListener('change', (e) => {
+      const settings = getSettings();
+      settings.ageLimit = e.target.checked;
+      saveSettings(settings);
+    });
+
+    // Color Picker
+    document.querySelectorAll('.color-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const color = btn.dataset.color;
+        const settings = getSettings();
+        settings.iconColor = color;
+        saveSettings(settings);
+        
+        // Update active state
+        document.querySelectorAll('.color-option').forEach(b => {
+          b.classList.remove('ring-4', 'ring-offset-2');
+        });
+        btn.classList.add('ring-4', 'ring-offset-2');
+      });
+      
+      // Set active state on load
+      if (btn.dataset.color === currentSettings.iconColor) {
+        btn.classList.add('ring-4', 'ring-offset-2');
+      }
+    });
+
+    // YouTube API Search Function
+    async function searchYouTube(query) {
+      const settings = getSettings();
+      let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${MAX_RESULTS}&q=${encodeURIComponent(query)}&type=video&key=${YOUTUBE_API_KEY}`;
+      
+      // Add safe search if age limit is enabled
+      if (settings.ageLimit) {
+        url += '&safeSearch=strict';
+      }
+      
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+        
+        return data.items;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    function updateQueueUI() {
+      document.getElementById('current-queue-position').textContent = currentQueueIndex + 1;
+      document.getElementById('total-queue-count').textContent = videoQueue.length;
+      
+      // Update button states
+      const shuffleBtn = document.getElementById('shuffle-btn');
+      const loopBtn = document.getElementById('loop-btn');
+      
+      if (isShuffleEnabled) {
+        shuffleBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        shuffleBtn.classList.add('bg-icon-colored', 'hover:bg-purple-700', 'text-white');
+      } else {
+        shuffleBtn.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        shuffleBtn.classList.remove('bg-icon-colored', 'hover:bg-purple-700', 'text-white');
+      }
+      
+      if (isLoopEnabled) {
+        loopBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        loopBtn.classList.add('bg-icon-colored', 'hover:bg-purple-700', 'text-white');
+      } else {
+        loopBtn.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        loopBtn.classList.remove('bg-icon-colored', 'hover:bg-purple-700', 'text-white');
+      }
+    }
+
+    function playNextInQueue() {
+      if (videoQueue.length === 0) return;
+      
+      if (isShuffleEnabled) {
+        currentQueueIndex = Math.floor(Math.random() * videoQueue.length);
+      } else {
+        currentQueueIndex++;
+        if (currentQueueIndex >= videoQueue.length) {
+          if (isLoopEnabled) {
+            currentQueueIndex = 0;
+          } else {
+            currentQueueIndex = videoQueue.length - 1;
+            return;
+          }
+        }
+      }
+      
+      playVideoFromQueue(currentQueueIndex);
+    }
+
+    function playPrevInQueue() {
+      if (videoQueue.length === 0) return;
+      
+      if (isShuffleEnabled) {
+        currentQueueIndex = Math.floor(Math.random() * videoQueue.length);
+      } else {
+        currentQueueIndex--;
+        if (currentQueueIndex < 0) {
+          if (isLoopEnabled) {
+            currentQueueIndex = videoQueue.length - 1;
+          } else {
+            currentQueueIndex = 0;
+            return;
+          }
+        }
+      }
+      
+      playVideoFromQueue(currentQueueIndex);
+    }
+
+    function playVideoFromQueue(index) {
+      if (index >= 0 && index < videoQueue.length) {
+        currentQueueIndex = index;
+        const video = videoQueue[index];
+        currentVideo = video;
+        
+        // Update video info
+        document.getElementById('video-title').textContent = video.title;
+        document.getElementById('video-channel').textContent = video.channelTitle;
+        
+        // Update like button
+        const likeBtn = document.getElementById('like-btn');
+        const likeText = document.getElementById('like-text');
+        if (isLiked(video.videoId)) {
+          likeText.textContent = 'Unlike';
+          likeBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+          likeBtn.classList.remove('bg-icon-colored', 'hover:bg-purple-700');
+        } else {
+          likeText.textContent = 'Like';
+          likeBtn.classList.add('bg-icon-colored', 'hover:bg-purple-700');
+          likeBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+        }
+        
+        // Load video in player
+        if (player && player.loadVideoById) {
+          player.loadVideoById(video.videoId);
+        }
+        
+        updateQueueUI();
+      }
+    }
+
+    function playVideo(videoData, queue = []) {
+      currentVideo = videoData;
+      
+      // Set up queue
+      if (queue.length > 0) {
+        videoQueue = queue;
+        currentQueueIndex = queue.findIndex(v => v.videoId === videoData.videoId);
+        if (currentQueueIndex === -1) currentQueueIndex = 0;
+      } else {
+        videoQueue = [videoData];
+        currentQueueIndex = 0;
+      }
+      
+      // Hide tabs and top bar
+      tabBar.classList.add('hidden');
+      topBar.classList.add('hidden');
+      homeContent.classList.add('hidden');
+      libraryContent.classList.add('hidden');
+      historyContent.classList.add('hidden');
+      likesContent.classList.add('hidden');
+      settingsContent.classList.add('hidden');
+      queueContent.classList.add('hidden');
+      playerContent.classList.remove('hidden');
+      
+      // Update video info
+      document.getElementById('video-title').textContent = videoData.title;
+      document.getElementById('video-channel').textContent = videoData.channelTitle;
+      
+      // Update like button
+      const likeBtn = document.getElementById('like-btn');
+      const likeText = document.getElementById('like-text');
+      if (isLiked(videoData.videoId)) {
+        likeText.textContent = 'Unlike';
+        likeBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+        likeBtn.classList.remove('bg-icon-colored', 'hover:bg-purple-700');
+      } else {
+        likeText.textContent = 'Like';
+        likeBtn.classList.add('bg-icon-colored', 'hover:bg-purple-700');
+        likeBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+      }
+      
+      updateQueueUI();
+      
+      // Create YouTube player
+      function initPlayer() {
+        if (player && player.loadVideoById) {
+          // Player already exists, just load new video
+          player.loadVideoById(videoData.videoId);
+        } else {
+          // Create new player
+          const playerContainer = document.getElementById('player-container');
+          playerContainer.innerHTML = ''; // Clear any existing content
+          
+          player = new YT.Player('player-container', {
+            videoId: videoData.videoId,
+            width: '100%',
+            height: '100%',
+            playerVars: {
+              autoplay: 1,
+              modestbranding: 1,
+              rel: 0
+            },
+            events: {
+              onStateChange: onPlayerStateChange,
+              onError: onPlayerError
+            }
+          });
+        }
+      }
+      
+      // Wait for YouTube API to be ready
+      if (ytApiReady && typeof YT !== 'undefined' && YT.Player) {
+        initPlayer();
+      } else {
+        // Retry until API is ready
+        const checkInterval = setInterval(() => {
+          if (ytApiReady && typeof YT !== 'undefined' && YT.Player) {
+            clearInterval(checkInterval);
+            initPlayer();
+          }
+        }, 100);
+      }
+      
+      // Start tracking watch percentage
+      if (watchInterval) clearInterval(watchInterval);
+      watchInterval = setInterval(() => {
+        if (player && typeof player.getDuration === 'function') {
+          try {
+            const duration = player.getDuration();
+            const currentTime = player.getCurrentTime();
+            if (duration > 0) {
+              const percentage = Math.round((currentTime / duration) * 100);
+              saveToHistory(currentVideo, percentage);
+            }
+          } catch (e) {
+            // Player not ready yet
+          }
+        }
+      }, 5000);
+    }
+
+    function onPlayerStateChange(event) {
+      // Save to history when video ends or is paused
+      if (event.data === YT.PlayerState.ENDED) {
+        if (player && currentVideo) {
+          try {
+            const duration = player.getDuration();
+            const currentTime = player.getCurrentTime();
+            if (duration > 0) {
+              const percentage = Math.round((currentTime / duration) * 100);
+              saveToHistory(currentVideo, percentage);
+            }
+          } catch (e) {
+            // Player not ready
+          }
+        }
+        
+        // Auto play next video
+        playNextInQueue();
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        if (player && currentVideo) {
+          try {
+            const duration = player.getDuration();
+            const currentTime = player.getCurrentTime();
+            if (duration > 0) {
+              const percentage = Math.round((currentTime / duration) * 100);
+              saveToHistory(currentVideo, percentage);
+            }
+          } catch (e) {
+            // Player not ready
+          }
+        }
+      }
+    }
+
+    function onPlayerError(event) {
+      // Handle player errors (e.g., video not embeddable - Error 150)
+      let errorMsg = 'Unable to play this video. ';
+      if (event.data === 150 || event.data === 101 || event.data === 100) {
+        errorMsg += 'The video owner has restricted playback on external sites.';
+      } else {
+        errorMsg += 'Please try another video.';
+      }
+      
+      // Show error message
+      const playerContainer = document.getElementById('player-container');
+      playerContainer.innerHTML = `
+        <div class="flex items-center justify-center h-full bg-gray-900">
+          <div class="text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-white text-lg mb-4">${errorMsg}</p>
+            <button onclick="playNextInQueue()" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors mr-2">
+              Next Video
+            </button>
+            <button onclick="document.getElementById('back-btn').click()" class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+              Go Back
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function displayVideos(videos) {
+      welcomeMessage.classList.add('hidden');
+      videoResults.innerHTML = '';
+      
+      const videoList = videos.map(video => ({
+        videoId: video.id.videoId,
+        title: video.snippet.title,
+        channelTitle: video.snippet.channelTitle,
+        thumbnail: video.snippet.thumbnails.medium.url
+      }));
+      
+      videos.forEach((video, index) => {
+        const videoId = video.id.videoId;
+        const title = video.snippet.title;
+        const channelTitle = video.snippet.channelTitle;
+        const thumbnail = video.snippet.thumbnails.medium.url;
+        
+        const videoCard = document.createElement('div');
+        videoCard.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200 flex flex-col cursor-pointer';
+        
+        videoCard.innerHTML = `
+          <div class="relative pb-[56.25%] bg-gray-200">
+            <img src="${thumbnail}" alt="${title}" class="absolute inset-0 w-full h-full object-cover" onerror="this.src=''; this.alt='Thumbnail unavailable';" />
+          </div>
+          <div class="p-3 flex-1 flex flex-col">
+            <h3 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-2">${title}</h3>
+            <p class="text-xs text-gray-600 mt-auto">${channelTitle}</p>
+          </div>
+        `;
+        
+        videoCard.addEventListener('click', () => {
+          playVideo(videoList[index], videoList);
+        });
+        
+        videoResults.appendChild(videoCard);
+      });
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove('hidden');
+      setTimeout(() => {
+        errorMessage.classList.add('hidden');
+      }, 5000);
+    }
+
+    function displayHistoryPage() {
+      const history = getHistory();
+      const historyList = document.getElementById('history-list');
+      historyList.innerHTML = '';
+      
+      if (history.length === 0) {
+        historyList.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12">No watch history yet</p>';
+        return;
+      }
+      
+      history.forEach(video => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200 flex flex-col cursor-pointer';
+        
+        videoCard.innerHTML = `
+          <div class="relative pb-[56.25%] bg-gray-200">
+            <img src="${video.thumbnail}" alt="${video.title}" class="absolute inset-0 w-full h-full object-cover" onerror="this.src=''; this.alt='Thumbnail unavailable';" />
+            <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+              ${video.percentage}% watched
+            </div>
+          </div>
+          <div class="p-3 flex-1 flex flex-col">
+            <h3 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-2">${video.title}</h3>
+            <p class="text-xs text-gray-600 mt-auto">${video.channelTitle}</p>
+          </div>
+        `;
+        
+        videoCard.addEventListener('click', () => {
+          playVideo(video, history);
+        });
+        
+        historyList.appendChild(videoCard);
+      });
+    }
+
+    function displayLikesPage() {
+      const liked = getLikedVideos();
+      const likesList = document.getElementById('likes-list');
+      likesList.innerHTML = '';
+      
+      if (liked.length === 0) {
+        likesList.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12">No liked videos yet</p>';
+        return;
+      }
+      
+      liked.forEach(video => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-200 flex flex-col cursor-pointer';
+        
+        videoCard.innerHTML = `
+          <div class="relative pb-[56.25%] bg-gray-200">
+            <img src="${video.thumbnail}" alt="${video.title}" class="absolute inset-0 w-full h-full object-cover" onerror="this.src=''; this.alt='Thumbnail unavailable';" />
+          </div>
+          <div class="p-3 flex-1 flex flex-col">
+            <h3 class="font-semibold text-gray-800 text-sm line-clamp-2 mb-2">${video.title}</h3>
+            <p class="text-xs text-gray-600 mt-auto">${video.channelTitle}</p>
+          </div>
+        `;
+        
+        videoCard.addEventListener('click', () => {
+          playVideo(video, liked);
+        });
+        
+        likesList.appendChild(videoCard);
+      });
+    }
+
+    let draggedIndex = null;
+
+    function displayQueuePage() {
+      const queueList = document.getElementById('queue-list');
+      queueList.innerHTML = '';
+      
+      if (videoQueue.length === 0) {
+        queueList.innerHTML = '<p class="text-center text-gray-500 py-12">No videos in queue</p>';
+        return;
+      }
+      
+      videoQueue.forEach((video, index) => {
+        const isCurrentVideo = index === currentQueueIndex;
+        const queueItem = document.createElement('div');
+        queueItem.className = `flex items-center gap-4 bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow ${isCurrentVideo ? 'border-2 border-icon-colored' : ''}`;
+        queueItem.draggable = true;
+        queueItem.dataset.index = index;
+        
+        queueItem.innerHTML = `
+          <div class="flex-shrink-0 text-gray-600 font-bold text-lg w-8 text-center pointer-events-none">
+            ${isCurrentVideo ? '<svg class="w-6 h-6 icon-colored mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>' : index + 1}
+          </div>
+          <div class="flex-shrink-0">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+            </svg>
+          </div>
+          <div class="flex-shrink-0 w-32 h-20 bg-gray-200 rounded overflow-hidden pointer-events-none">
+            <img src="${video.thumbnail}" alt="${video.title}" class="w-full h-full object-cover" onerror="this.src=''; this.alt='Thumbnail unavailable';" />
+          </div>
+          <div class="flex-1 min-w-0 pointer-events-none">
+            <h3 class="font-semibold text-gray-800 text-sm truncate">${video.title}</h3>
+            <p class="text-xs text-gray-600 truncate">${video.channelTitle}</p>
+          </div>
+          <button class="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors play-btn" data-index="${index}">
+            <svg class="w-5 h-5 icon-colored" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          <button class="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors remove-btn" data-index="${index}">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        `;
+        
+        // Drag and drop events
+        queueItem.addEventListener('dragstart', (e) => {
+          draggedIndex = index;
+          queueItem.style.opacity = '0.5';
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        
+        queueItem.addEventListener('dragend', (e) => {
+          queueItem.style.opacity = '1';
+          draggedIndex = null;
+          // Remove all drag-over styling
+          document.querySelectorAll('.drag-over').forEach(el => {
+            el.classList.remove('drag-over');
+          });
+        });
+        
+        queueItem.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          
+          if (draggedIndex !== null && draggedIndex !== index) {
+            queueItem.classList.add('drag-over');
+          }
+        });
+        
+        queueItem.addEventListener('dragleave', (e) => {
+          queueItem.classList.remove('drag-over');
+        });
+        
+        queueItem.addEventListener('drop', (e) => {
+          e.preventDefault();
+          queueItem.classList.remove('drag-over');
+          
+          if (draggedIndex !== null && draggedIndex !== index) {
+            // Reorder the queue
+            const draggedVideo = videoQueue[draggedIndex];
+            videoQueue.splice(draggedIndex, 1);
+            videoQueue.splice(index, 0, draggedVideo);
+            
+            // Update current queue index
+            if (currentQueueIndex === draggedIndex) {
+              currentQueueIndex = index;
+            } else if (draggedIndex < currentQueueIndex && index >= currentQueueIndex) {
+              currentQueueIndex--;
+            } else if (draggedIndex > currentQueueIndex && index <= currentQueueIndex) {
+              currentQueueIndex++;
+            }
+            
+            updateQueueUI();
+            displayQueuePage();
+          }
+        });
+        
+        queueList.appendChild(queueItem);
+      });
+      
+      // Add event listeners after all items are added
+      queueList.querySelectorAll('.play-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const index = parseInt(btn.dataset.index);
+          playVideoFromQueue(index);
+          showPlayer();
+        });
+      });
+      
+      queueList.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const index = parseInt(btn.dataset.index);
+          removeFromQueue(index);
+        });
+      });
+    }
+
+    function removeFromQueue(index) {
+      if (videoQueue.length === 0) return;
+      
+      videoQueue.splice(index, 1);
+      
+      // Adjust current index if needed
+      if (currentQueueIndex >= index && currentQueueIndex > 0) {
+        currentQueueIndex--;
+      }
+      
+      if (currentQueueIndex >= videoQueue.length) {
+        currentQueueIndex = videoQueue.length - 1;
+      }
+      
+      updateQueueUI();
+      displayQueuePage();
+      
+      // If queue is empty, go back to home
+      if (videoQueue.length === 0) {
+        switchTab('home');
+      }
+    }
+
+    function showPlayer() {
+      tabBar.classList.add('hidden');
+      topBar.classList.add('hidden');
+      homeContent.classList.add('hidden');
+      libraryContent.classList.add('hidden');
+      historyContent.classList.add('hidden');
+      likesContent.classList.add('hidden');
+      settingsContent.classList.add('hidden');
+      queueContent.classList.add('hidden');
+      playerContent.classList.remove('hidden');
+    }
+
+    // Button event listeners
+    document.getElementById('back-btn').addEventListener('click', () => {
+      if (watchInterval) clearInterval(watchInterval);
+      if (player) player.pauseVideo();
+      switchTab('home');
+    });
+
+    document.getElementById('like-btn').addEventListener('click', () => {
+      if (currentVideo) {
+        const liked = toggleLike(currentVideo);
+        const likeText = document.getElementById('like-text');
+        const likeBtn = document.getElementById('like-btn');
+        
+        if (liked) {
+          likeText.textContent = 'Unlike';
+          likeBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+          likeBtn.classList.remove('bg-icon-colored', 'hover:bg-purple-700');
+        } else {
+          likeText.textContent = 'Like';
+          likeBtn.classList.add('bg-icon-colored', 'hover:bg-purple-700');
+          likeBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+        }
+      }
+    });
+
+    document.getElementById('next-btn').addEventListener('click', playNextInQueue);
+    document.getElementById('prev-btn').addEventListener('click', playPrevInQueue);
+
+    document.getElementById('shuffle-btn').addEventListener('click', () => {
+      isShuffleEnabled = !isShuffleEnabled;
+      updateQueueUI();
+    });
+
+    document.getElementById('loop-btn').addEventListener('click', () => {
+      isLoopEnabled = !isLoopEnabled;
+      updateQueueUI();
+    });
+
+    document.getElementById('history-btn').addEventListener('click', () => {
+      homeContent.classList.add('hidden');
+      libraryContent.classList.add('hidden');
+      playerContent.classList.add('hidden');
+      likesContent.classList.add('hidden');
+      settingsContent.classList.add('hidden');
+      historyContent.classList.remove('hidden');
+      displayHistoryPage();
+    });
+
+    document.getElementById('likes-btn').addEventListener('click', () => {
+      homeContent.classList.add('hidden');
+      libraryContent.classList.add('hidden');
+      playerContent.classList.add('hidden');
+      historyContent.classList.add('hidden');
+      settingsContent.classList.add('hidden');
+      likesContent.classList.remove('hidden');
+      displayLikesPage();
+    });
+
+    document.getElementById('back-from-history').addEventListener('click', () => {
+      switchTab('library');
+    });
+
+    document.getElementById('back-from-likes').addEventListener('click', () => {
+      switchTab('library');
+    });
+
+    document.getElementById('show-queue-btn').addEventListener('click', () => {
+      displayQueuePage();
+      tabBar.classList.add('hidden');
+      topBar.classList.add('hidden');
+      homeContent.classList.add('hidden');
+      libraryContent.classList.add('hidden');
+      historyContent.classList.add('hidden');
+      likesContent.classList.add('hidden');
+      settingsContent.classList.add('hidden');
+      playerContent.classList.add('hidden');
+      queueContent.classList.remove('hidden');
+    });
+
+    document.getElementById('back-from-queue').addEventListener('click', () => {
+      showPlayer();
+    });
+
+    // Make functions available globally for error handler
+    window.playNextInQueue = playNextInQueue;
+
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const query = searchInput.value.trim();
+      if (!query) return;
+      
+      // Switch to home tab if not already there
+      if (currentTab !== 'home') {
+        switchTab('home');
+      }
+      
+      // Show loading state
+      welcomeMessage.classList.add('hidden');
+      loading.classList.remove('hidden');
+      videoResults.innerHTML = '';
+      errorMessage.classList.add('hidden');
+      
+      try {
+        const videos = await searchYouTube(query);
+        loading.classList.add('hidden');
+        
+        if (videos.length === 0) {
+          showError('No videos found. Try a different search term.');
+        } else {
+          displayVideos(videos);
+        }
+      } catch (error) {
+        loading.classList.add('hidden');
+        showError('No internet connection, please try again, or our API is not working properly.');
+      }
+    });
+
+    async function onConfigChange(config) {
+      const homeLabel = config.home_label || defaultConfig.home_label;
+      const libraryLabel = config.library_label || defaultConfig.library_label;
+      
+      document.getElementById('home-tab-label').textContent = homeLabel;
+      document.getElementById('library-tab-label').textContent = libraryLabel;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["home_label", config.home_label || defaultConfig.home_label],
+          ["library_label", config.library_label || defaultConfig.library_label]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9abba650732db9f3',t:'MTc2NTM1ODI1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
